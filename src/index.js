@@ -815,7 +815,13 @@ async function handleRequest(request, env, ctx) {
 			const HOME_PAGE_URL = 'https://github.com/xixu-me/Xget';
       return Response.redirect(HOME_PAGE_URL, 302);
     }
-
+    // 在 transformPath 之前,添加 anyrouter 的全路径重定向逻辑
+    if (platform === 'anyrouter') {
+      // 对于 anyrouter,直接重定向所有路径到目标站点
+      const targetPath = transformPath(effectivePath, platform);
+      const targetUrl = `${config.PLATFORMS[platform]}${targetPath}${url.search}`;
+      return Response.redirect(targetUrl, 302);
+    }
     // Transform URL based on platform using unified logic
     const targetPath = transformPath(effectivePath, platform);
 
