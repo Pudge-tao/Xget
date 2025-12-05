@@ -177,7 +177,8 @@ export const PLATFORMS = {
   arxiv: 'https://arxiv.org',
   fdroid: 'https://f-droid.org',
   jenkins: 'https://updates.jenkins.io',
-
+  anyrouter: 'https://anyrouter.top',
+	
   // AI Inference Providers
   'ip-openai': 'https://api.openai.com',
   'ip-anthropic': 'https://api.anthropic.com',
@@ -208,7 +209,6 @@ export const PLATFORMS = {
   'ip-poe': 'https://api.poe.com',
   'ip-featherlessai': 'https://api.featherless.ai',
   'ip-hyperbolic': 'https://api.hyperbolic.xyz',
-  'ip-anyrouter': 'https://anyrouter.top',
 
   // Container Registries
   'cr-docker': 'https://registry-1.docker.io',
