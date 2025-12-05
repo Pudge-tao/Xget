@@ -807,21 +807,35 @@ async function handleRequest(request, env, ctx) {
     // For example: /gh, /npm, /pypi (should be /gh/user/repo, /npm/package, etc.)
     const platformPath = `/${platform.replace(/-/g, '/')}`;
     if (effectivePath === platformPath || effectivePath === `${platformPath}/`) {
-		  // Special handling for anyrouter: allow direct access to root
+      // Special handling for anyrouter: allow direct access to root
       if (platform === 'anyrouter') {
         const targetUrl = `${config.PLATFORMS[platform]}/`;
         return Response.redirect(targetUrl, 302);
       }
-			const HOME_PAGE_URL = 'https://github.com/xixu-me/Xget';
+      const HOME_PAGE_URL = 'https://github.com/xixu-me/Xget';
       return Response.redirect(HOME_PAGE_URL, 302);
     }
-    // 在 transformPath 之前,添加 anyrouter 的全路径重定向逻辑
+
+    // Special handling for anyrouter: redirect non-API paths, proxy API paths
     if (platform === 'anyrouter') {
-      // 对于 anyrouter,直接重定向所有路径到目标站点
       const targetPath = transformPath(effectivePath, platform);
-      const targetUrl = `${config.PLATFORMS[platform]}${targetPath}${url.search}`;
-      return Response.redirect(targetUrl, 302);
+
+      // Check if this is an API request (contains /v1/ or other API patterns)
+      const isAPIRequest = targetPath.includes('/v1/') ||
+                           targetPath.includes('/api/') ||
+                           request.method === 'POST' ||
+                           request.method === 'PUT' ||
+                           request.method === 'PATCH';
+
+      // For non-API requests (e.g., /login, /dashboard), use redirect
+      if (!isAPIRequest) {
+        const targetUrl = `${config.PLATFORMS[platform]}${targetPath}${url.search}`;
+        return Response.redirect(targetUrl, 302);
+      }
+
+      // For API requests, continue to proxy (don't return, let it fall through)
     }
+
     // Transform URL based on platform using unified logic
     const targetPath = transformPath(effectivePath, platform);
 
