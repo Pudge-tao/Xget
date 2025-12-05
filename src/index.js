@@ -807,7 +807,12 @@ async function handleRequest(request, env, ctx) {
     // For example: /gh, /npm, /pypi (should be /gh/user/repo, /npm/package, etc.)
     const platformPath = `/${platform.replace(/-/g, '/')}`;
     if (effectivePath === platformPath || effectivePath === `${platformPath}/`) {
-      const HOME_PAGE_URL = 'https://github.com/xixu-me/Xget';
+		  // Special handling for anyrouter: allow direct access to root
+      if (platform === 'anyrouter') {
+        const targetUrl = `${config.PLATFORMS[platform]}/`;
+        return Response.redirect(targetUrl, 302);
+      }
+			const HOME_PAGE_URL = 'https://github.com/xixu-me/Xget';
       return Response.redirect(HOME_PAGE_URL, 302);
     }
 
